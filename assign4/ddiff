@@ -1,0 +1,261 @@
+#!/usr/bin/perl -w
+
+if($ARGV[0] =~ /^-s\b/){
+    shift @ARGV;
+    @same = `/usr/bin/diff -s @ARGV`;
+    foreach $line (@same){
+        if ($line =~ /^Files ([\w\d\/.]+) and ([\w\d\/.]+) are identical/){
+            @field = split(/\//, $1);
+            print "> $field[@field-1] <\n";
+        }
+    }
+}
+
+elsif($ARGV[0] =~ /^-d\b/){
+    shift @ARGV;
+    @diff = `/usr/bin/diff -q @ARGV`;
+    foreach $line (@diff){
+        if($line =~ /^Files ([\w\d\/.]+) and ([\w\d\/.]+) differ/){
+            @field = split(/\//, $2);
+            print "< $field[@field-1] >\n";
+        }
+    }
+}
+
+elsif($ARGV[0] =~ /^-1\b/){
+    shift @ARGV;
+    @diff = `/usr/bin/diff -q @ARGV`;
+    foreach $line (@diff){
+        if($line =~ /^Only in $ARGV[0]: ([\w\d.]+)/){
+            print "<<< $1\n";# if -f $1;
+        }
+    }
+}
+elsif($ARGV[0] =~ /^-2\b/){
+    shift @ARGV;
+    @diff = `/usr/bin/diff -q @ARGV`;
+    foreach $line (@diff){
+        if($line =~ /^Only in $ARGV[1]: ([\w\d.]+)/){
+            print ">>> $1\n";# if -f $1;
+        }
+    }
+}
+
+elsif($ARGV[0] =~ /^-[ds][ds]\b/){
+    shift @ARGV;
+    @diff = `/usr/bin/diff -q @ARGV`;
+    @same = `/usr/bin/diff -s @ARGV`;
+    foreach $line (@diff){
+        if($line =~ /^Files ([\w\d\/.]+) and ([\w\d\/.]+) differ/){
+            @field = split(/\//, $2);
+            print "< $field[@field-1] >\n";
+        }
+    }
+    foreach $line (@same){
+        if ($line =~ /^Files ([\w\d\/.]+) and ([\w\d\/.]+) are identical/){
+            @field = split(/\//, $1);
+            print "> $field[@field-1] <\n";
+        }
+    }
+    }
+
+elsif($ARGV[0] =~ /-[d1][d1]\b/){
+    shift @ARGV;
+    @diff = `/usr/bin/diff -q @ARGV`;
+    foreach $line (@diff){
+        if($line =~ /^Files ([\w\d\/.]+) and ([\w\d\/.]+) differ/){
+            @field = split(/\//, $2);
+            print " -D < $field[@field-1] >\n";
+        }
+        if($line =~ /^Only in $ARGV[0]: ([\w\d.]+)/){
+            print "<<< $1\n";# if -f $1;
+        }
+    }
+}
+
+elsif($ARGV[0] =~ /^-[d2][d2]\b/){
+    shift @ARGV;
+    @diff = `/usr/bin/diff -q @ARGV`;
+    foreach $line (@diff){
+        if($line =~ /^Files ([\w\d\/.]+) and ([\w\d\/.]+) differ/){
+            @field = split(/\//, $2);
+            print "< $field[@field-1] >\n";
+        }
+        if($line =~ /^Only in $ARGV[1]: ([\w\d.]+)/){
+            print ">>> $1\n";# if -f $1;
+        }
+    }
+}
+
+elsif($ARGV[0] =~ /^-[s1][s1]\b/){
+    shift @ARGV;
+    @diff = `/usr/bin/diff -q @ARGV`;
+    @same = `/usr/bin/diff -s @ARGV`;
+    foreach $line (@diff){
+        if($line =~ /^Only in $ARGV[0]: ([\w\d.]+)/){
+            print "<<< $1\n";# if -f $1;
+        }
+    }
+    foreach $line (@same){
+        if ($line =~ /^Files ([\w\d\/.]+) and ([\w\d\/.]+) are identical/){
+            @field = split(/\//, $1);
+            print "> $field[@field-1] <\n";
+        }
+    }
+}
+
+elsif($ARGV[0] =~ /^-[s2][s2]\b/){
+    shift@ARGV;
+    @diff = `/usr/bin/diff -q @ARGV`;
+    @same = `/usr/bin/diff -s @ARGV`;
+    foreach $line (@diff){
+        if($line =~ /^Only in $ARGV[1]: ([\w\d.]+)/){
+            print ">>> $1\n";# if -f $1;
+        }
+    }
+    foreach $line (@same){
+        if ($line =~ /^Files ([\w\d\/.]+) and ([\w\d\/.]+) are identical/){
+            @field = split(/\//, $1);
+            print "> $field[@field-1] <\n";
+        }
+    }
+}
+
+elsif($ARGV[0] =~ /^-[12][12]\b/){
+    shift @ARGV;
+    @diff = `/usr/bin/diff -q @ARGV`;
+    foreach $line (@diff){
+        if($line =~ /^Only in $ARGV[1]: ([\w\d.]+)/){
+            print ">>> $1\n";# if -f $1;
+        }
+        if($line =~ /^Only in $ARGV[0]: ([\w\d.]+)/){
+            print "<<< $1\n";# if -f $1;
+        }
+    }
+}
+
+elsif($ARGV[0] =~ /^-[ds1][ds1][ds1]\b/){
+    shift @ARGV;
+    @diff = `/usr/bin/diff -q @ARGV`;
+    @same = `/usr/bin/diff -s @ARGV`;
+    foreach $line (@diff){
+        if($line =~ /^Files ([\w\d\/]+) and ([\w\d\/.]+) differ/){
+            @field = split(/\//, $2);
+            print "< $field[1] >\n";
+        }
+        if($line =~ /^Only in $ARGV[0]: ([\w\d.]+)/){
+            print "<<< $1\n";# if -f $1;
+        }
+    }
+    foreach $line (@same){
+        if ($line =~ /^Files ([\w\d\/.]+) and ([\w\d\/.]+) are identical/){
+            @field = split(/\//, $1);
+            print "> $field[@field-1] <\n";
+        }
+    }
+}
+
+elsif($ARGV[0] =~ /^-[ds2][ds2][ds2]\b/){
+    shift @ARGV;
+    @diff = `/usr/bin/diff -q @ARGV`;
+    @same = `/usr/bin/diff -s @ARGV`;
+    foreach $line (@diff){
+        if($line =~ /^Files ([\w\d\/]+) and ([\w\d\/.]+) differ/){
+            @field = split(/\//, $2);
+            print "< $field[1] >\n";
+        }
+        if($line =~ /^Only in $ARGV[1]: ([\w\d]+)/){
+            print ">>> $1\n";# if -f $1;
+        }
+    }
+    foreach $line (@same){
+        if ($line =~ /^Files ([\w\d\/.]+) and ([\w\d\/.]+) are identical/){
+            @field = split(/\//, $1);
+            print "> $field[@field-1] <\n";
+        }
+    }
+}
+
+elsif($ARGV[0] =~ /^-[d12][d12][d12]\b/){
+    shift @ARGV;
+    @diff = `/usr/bin/diff -q @ARGV`;
+    foreach $line (@diff){
+        if($line =~ /^Files ([\w\d\/]+) and ([\w\d\/.]+) differ/){
+            @field = split(/\//, $2);
+            print "< $field[1] >\n";
+        }
+        if($line =~ /^Only in $ARGV[1]: ([\w\d]+)/){
+            print ">>> $1\n";# if -f $1;
+        }
+        if($line =~ /^Only in $ARGV[0]: ([\w\d]+)/){
+            print "<<< $1\n";# if -f $1;
+        }
+    }
+}
+
+elsif($ARGV[0] =~ /^-[s12][s12][s12]\b/){
+    shift @ARGV;
+    @diff = `/usr/bin/diff -q @ARGV`;
+@same = `/usr/bin/diff -s @ARGV`;
+    foreach $line (@diff){
+        if($line =~ /^Only in $ARGV[1]: ([\w\d.]+)/){
+            print ">>> $1\n";# if -f $1;
+        }
+        if($line =~ /^Only in $ARGV[0]: ([\w\d.]+)/){
+            print "<<< $1\n";# if -f $1;
+        }
+    }
+foreach $line (@same){
+        if ($line =~ /^Files ([\w\d\/.]+) and ([\w\d\/.]+) are identical/){
+            @field = split(/\//, $1);
+            print "> $field[@field-1] <\n";
+        }
+    }
+}
+
+elsif($ARGV[0] =~ /^-[ds12][ds12][ds12][ds12]\b/){
+    shift @ARGV;
+    @diff = `/usr/bin/diff -q @ARGV`;
+    @same = `/usr/bin/diff -s @ARGV`;
+    foreach $line (@diff){
+        if($line =~ /^Files ([\w\d\/]+) and ([\w\d\/.]+) differ/){
+            @field = split(/\//, $2);
+            print "< $field[1] >\n";
+        }
+        if($line =~ /^Only in $ARGV[0]: ([\w\d.]+)/){
+            print "<<< $1\n";# if -f $1;
+        }
+        if($line =~ /^Only in $ARGV[1]: ([\w\d.]+)/){
+            print ">>> $1\n";# if -f $1;
+        }
+    }
+foreach $line (@same){
+        if ($line =~ /^Files ([\w\d\/.]+) and ([\w\d\/.]+) are identical/){
+            @field = split(/\//, $1);
+            print "> $field[@field-1] <\n";
+        }
+    }
+}
+
+else{
+    @diff = `/usr/bin/diff -q @ARGV`;
+    @same = `/usr/bin/diff -s @ARGV`;
+    foreach $line (@diff){
+        if($line =~ /^Only in $ARGV[0]: ([\w\d.]+)/){
+            print "<<< $1\n";# if -e $1;
+        }
+        if($line =~ /^Only in $ARGV[1]: ([\w\d.]+)/){
+            print ">>> $1\n";# if -f $1;
+        }
+        if($line =~ /^Files ([\w\d\/.]+) and ([\w\d\/.]+) differ/){
+            @field = split(/\//, $2);
+            print "< $field[@field-1] >\n";
+        }
+    }
+    foreach $line (@same){
+        if ($line =~ /^Files ([\w\d\/.]+) and ([\w\d\/.]+) are identical/){
+            @field = split(/\//, $1);
+            print "> $field[@field-1] <\n";
+        }
+    }
+}
