@@ -1,0 +1,35 @@
+#!/usr/bin/perl -w
+
+if($ARGV[0] eq "-f"){
+   # `strings $ARGV` unless -f $ARGV && -T $ARGV;
+    shift @ARGV;
+    $rexp = shift @ARGV;
+    foreach $file(@ARGV){
+        @find = `find $file -print`;
+        chop @find;
+        foreach $file(@find){
+            open(FH,$file);
+            while(<FH>){
+
+                if( /$rexp\b/){
+                    print "$file\n" if not $line{$file}++;
+                }
+            }
+        }
+    }
+}else{
+   # @test = `strings $ARGV` unless -f $ARGV && -T $ARGV;
+    $rexp = shift @ARGV;
+    foreach $line(@ARGV){
+        @find = `find $line -print`;
+        chop @find;
+        foreach $line(@find){
+            open(FH,$line);
+            while(<FH>){
+                if(/$rexp\b/){
+                    print "$line : $_";
+                }
+            }
+        }
+    }
+}
