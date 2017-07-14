@@ -1,0 +1,41 @@
+#!/usr/bin/perl -w
+if($ARGV[1]){
+    $outfile = pop @ARGV;
+    open (OUTFILE, ">$outfile") or die;
+
+    @files = `find $ARGV[0] -print`;
+    if(-d $ARGV[0]){
+        shift @files;
+    }
+    chop @files;
+    foreach $line(@files){
+        @sha =  `sha256sum $line` if -f $line && -T $line;
+        foreach $lines(@sha){
+            shift @sha;
+            @field = split(/\s+/, $lines);
+            print OUTFILE "$field[1]\t$field[0]\n" if -f $line;
+        }
+    }
+}
+
+
+
+
+
+
+
+else{
+    @files = `find $ARGV[0] -print`;
+    if(-d $ARGV[0]){
+        shift @files;
+    }
+    chop @files;
+    foreach $line(@files){
+        @sha =  `sha256sum $line` if -f $line && -T $line;
+        foreach $lines(@sha ){
+            shift @sha;
+            @field = split(/\s+/, $lines);
+            print "$field[1]\t$field[0]\n" if -f $line;
+        }
+    }
+}
